@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Travel Planner</title>
+  </head>
+  <body>
+    <div class="holder headline">Travel Planner</div>
+    <form onsubmit="return Client.handleSubmit(event)">
+      <label for="city">Enter City here</label>
+      <input
+        id="city"
+        type="text"
+        name="input"
+        value=""
+        placeholder="enter city here"
+      />
+      <input
+        type="submit"
+        name=""
+        value="submit"
+        onclick="return Client.handleSubmit(event)"
+        onsubmit="return Client.handleSubmit(event)"
+      />
+    </form>
+    <div id="placeHolder"></div>
+  </body>
+</html>
