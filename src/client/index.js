@@ -1,4 +1,4 @@
-import { handleSubmit } from "./js/cityForm";
+import { handleSubmit } from "./js/formSubmit";
 
 import "./styles/base.scss";
 

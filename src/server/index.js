@@ -11,6 +11,14 @@ const geoUrlObject = {
   mid: "&maxRows=10&username=",
 };
 
+const weatherUrlObject = {
+  key: process.env.WEATHER_KEY,
+  baseUrl: "https://api.weatherbit.io/v2.0/daily?units=i&lat=",
+  mid: "&lon=",
+  days: "&days=",
+  befroeKey: "&key=",
+};
+
 const app = express();
 app.use(cors());
 // to use json
@@ -30,6 +38,10 @@ app.get("/", function (req, res) {
 
 app.get("/city", function (req, res) {
   res.json(geoUrlObject);
+});
+
+app.get("/weather", function (req, res) {
+  res.json(weatherUrlObject);
 });
 
 // designates what port the app will listen to for incoming requests
