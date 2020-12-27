@@ -6,17 +6,16 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const geoUrlObject = {
-  key: process.env.GEO_KEY,
   baseUrl: "http://api.geonames.org/searchJSON?q=",
-  mid: "&maxRows=10&username=",
+  end: `&maxRows=10&fuzzy=0.8&username=${process.env.GEO_KEY}`,
 };
 
 const weatherUrlObject = {
-  key: process.env.WEATHER_KEY,
-  baseUrl: "https://api.weatherbit.io/v2.0/daily?units=i&lat=",
+  key: `&key=${process.env.WEATHER_KEY}`,
+  baseUrl: "https://api.weatherbit.io/v2.0/",
+  type: "/daily?units=I&lat=",
   mid: "&lon=",
   days: "&days=",
-  befroeKey: "&key=",
 };
 
 const app = express();

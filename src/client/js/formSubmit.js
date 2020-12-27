@@ -16,88 +16,110 @@
 // Allow the user to add additional trips (this may take some heavy reworking, but is worth the challenge).
 // Automatically sort additional trips by countdown.
 // Move expired trips to bottom/have their style change so it’s clear it’s expired.
-
-
+const dayConvert = 1000 * 60 * 60 * 24;
 function handleSubmit(event) {
   event.preventDefault();
+
+  const currentDate = new Date();
+
   // trip start and end date from form submit
-  const startDate = document.getElementById("date-departure").value;
-  const endDate = document.getElementById("date-return").value;
+  let startDate = document.getElementById("date-departure").value;
+  let endDate = document.getElementById("date-return").value;
+
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
+
+  startDate.setFullYear(startDate.getFullYear() - 1);
+  console.log(startDate + "     " + endDate);
 
   //length of trip in nanoseconds
-  const tripTime = new Date(endDate) - new Date(startDate);
+  const tripTime = endDate - startDate;
   //gets length of trip in days
-  const lengthOfTrip = tripTime / (1000 * 60 * 60 * 24);
-  console.log(lengthOfTrip + "length of the trip");
+  const lengthOfTrip = tripTime / dayConvert;
 
   //time till the trip starts in nanoseconds
-  const timeTillTrip = new Date(startDate) - new Date();
-  //time till trip in days
-  const daysTillTrip = Math.floor(timeTillTrip / (1000 * 60 * 60 * 24));
-
-  console.log(daysTillTrip + "time till trip starts");
+  const timeTillTrip = new Date(startDate) - currentDate;
+  //time till trip starts in days
+  const daysTillTrip = Math.floor(timeTillTrip / dayConvert);
+  //time till the trip ends in nanoseconds
+  const timeTillTripEnds = new Date(endDate) - currentDate;
+  //conver to days
+  const daysTillTripEnds = Math.floor(timeTillTripEnds / dayConvert);
 
   let formText = document.getElementById("city").value;
-  console.log(formText);
   if (formText) {
     fetch("http://localhost:3000/city")
       .then((res) => res.json())
       .then((res) => {
-        return getCity(res.baseUrl, res.key, res.mid, formText);
-      })
-      .then((res) => {
-        console.log(res.geonames[0].lat + "     " + res.geonames[0].lng);
-        fetch("http://localhost:3000/weather")
-          .then((res) => res.json())
-          .then((res) => {
-            getWeather(
-              res.key,
-              res.baseUrl,
-              res.mid,
-              res.days,
-              res.beforeKey,
-              lengthOfTrip,
-              res.geonames[0].lat,
-              res.geonames[0].lng
-            );
-          });
+        getCity(res.baseUrl, res.end, formText, daysTillTrip, daysTillTripEnds);
       });
   }
 }
 
-const getCity = async (baseURL, key, mid, city) => {
+const getCity = async (baseURL, end, city, daysTillTrip, daysTillTripEnds) => {
   try {
-    const res = await fetch(baseURL + city + mid + key);
+    const res = await fetch(baseURL + city + end);
     const data = await res.json();
-    return data;
+    getWeather(data.geonames[0], daysTillTrip, daysTillTripEnds);
   } catch (err) {
     console.log(err + "error");
   }
 };
 
-const getWeather = async (
-  key,
-  baseUrl,
-  mid,
-  days,
-  beforeKey,
-  lengthOfTrip,
-  lat,
-  lng
-) => {
-  try {
-    const res = await fetch(
-      baseUrl + lat + mid + lng + days + lengthOfTrip + beforeKey + key
-    );
-    const data = await res.json();
-    setUI(data[0].high_temp);
-  } catch (err) {
-    console.log(err + "error");
+const getWeather = async ({ lat, lng }, daysTillTrip, daysTillTripEnds) => {
+  let type;
+  let daysOfTrip = daysTillTripEnds - daysTillTrip;
+
+  if (daysTillTripEnds < 16 && daysTillTrip > 0) {
+    console.log("forecast");
+    type = "forecast";
+    try {
+      const res = await fetch("http://localhost:3000/weather");
+      const data = await res.json();
+      const weatherObj = await fetch(
+        data.baseUrl +
+          type +
+          data.type +
+          lat +
+          data.mid +
+          lng +
+          data.days +
+          daysOfTrip +
+          data.key
+      );
+      const weatherInfo = await weatherObj.json();
+      setUI(weatherInfo);
+    } catch (err) {
+      console.log(err + "error");
+    }
+  } else {
+    type = "history";
+    try {
+      const res = await fetch("http://localhost:3000/weather");
+      const data = await res.json();
+      const weatherObj = await fetch(
+        data.baseUrl +
+          type +
+          data.type +
+          lat +
+          data.mid +
+          lng +
+          "&start_date=2020-12-23&end_date=2020-12-24" +
+          data.key
+      );
+      const weatherInfo = await weatherObj.json();
+      setUI(weatherInfo);
+    } catch (err) {
+      console.log(err + "error");
+    }
   }
 };
 
-const setUI = (highTemp) => {
-  document.getElementById("placeHolder").innerHTML = highTemp;
+const setUI = (data) => {
+  console.log(data.data[0]);
+  document.getElementById("placeHolder").innerHTML = data.city_name;
+  document.getElementById("description").innerHTML =
+    data.data[0].weather.description;
 };
 
 export { handleSubmit };
