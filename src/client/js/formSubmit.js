@@ -29,14 +29,6 @@ function handleSubmit(event) {
   startDate = new Date(startDate);
   endDate = new Date(endDate);
 
-  startDate.setFullYear(startDate.getFullYear() - 1);
-  console.log(startDate + "     " + endDate);
-
-  //length of trip in nanoseconds
-  const tripTime = endDate - startDate;
-  //gets length of trip in days
-  const lengthOfTrip = tripTime / dayConvert;
-
   //time till the trip starts in nanoseconds
   const timeTillTrip = new Date(startDate) - currentDate;
   //time till trip starts in days
@@ -51,26 +43,57 @@ function handleSubmit(event) {
     fetch("http://localhost:3000/city")
       .then((res) => res.json())
       .then((res) => {
-        getCity(res.baseUrl, res.end, formText, daysTillTrip, daysTillTripEnds);
+        getCity(
+          res.baseUrl,
+          res.end,
+          formText,
+          daysTillTrip,
+          daysTillTripEnds,
+          startDate,
+          endDate
+        );
       });
   }
 }
 
-const getCity = async (baseURL, end, city, daysTillTrip, daysTillTripEnds) => {
+const getCity = async (
+  baseURL,
+  end,
+  city,
+  daysTillTrip,
+  daysTillTripEnds,
+  startDate,
+  endDate
+) => {
   try {
     const res = await fetch(baseURL + city + end);
     const data = await res.json();
-    getWeather(data.geonames[0], daysTillTrip, daysTillTripEnds);
+    getWeather(
+      data.geonames[0],
+      daysTillTrip,
+      daysTillTripEnds,
+      startDate,
+      endDate
+    );
   } catch (err) {
     console.log(err + "error");
   }
 };
 
-const getWeather = async ({ lat, lng }, daysTillTrip, daysTillTripEnds) => {
+const getWeather = async (
+  { lat, lng },
+  daysTillTrip,
+  daysTillTripEnds,
+  startDate,
+  endDate
+) => {
   let type;
-  let daysOfTrip = daysTillTripEnds - daysTillTrip;
+  let daysOfTrip = daysTillTripEnds - daysTillTrip + 1;
+  let histStartDate = formatDate(startDate);
+  let histEndDate = formatDate2(startDate);
 
-  if (daysTillTripEnds < 16 && daysTillTrip > 0) {
+  console.log(histStartDate + "    " + histEndDate);
+  if (daysTillTripEnds <= 16 && daysTillTrip > 0) {
     console.log("forecast");
     type = "forecast";
     try {
@@ -88,11 +111,13 @@ const getWeather = async ({ lat, lng }, daysTillTrip, daysTillTripEnds) => {
           data.key
       );
       const weatherInfo = await weatherObj.json();
-      setUI(weatherInfo);
+      let picUrl = getPicture(weatherInfo.city_name);
+      setUI(weatherInfo, daysTillTrip, daysTillTripEnds, picUrl);
     } catch (err) {
       console.log(err + "error");
     }
-  } else {
+  } else if (daysTillTrip > 0) {
+    console.log("history");
     type = "history";
     try {
       const res = await fetch("http://localhost:3000/weather");
@@ -104,22 +129,62 @@ const getWeather = async ({ lat, lng }, daysTillTrip, daysTillTripEnds) => {
           lat +
           data.mid +
           lng +
-          "&start_date=2020-12-23&end_date=2020-12-24" +
+          "&start_date=" +
+          histStartDate +
+          "&end_date=" +
+          histEndDate +
           data.key
       );
       const weatherInfo = await weatherObj.json();
-      setUI(weatherInfo);
+      let picUrl = getPicture(weatherInfo.city_name);
+      setUI(weatherInfo, histStartDate, histEndDate, picUrl);
     } catch (err) {
       console.log(err + "error");
     }
+  } else {
+    console.log("That's in the past baby");
   }
 };
 
-const setUI = (data) => {
-  console.log(data.data[0]);
+const setUI = (data, daysTillTrip, daysTillTripEnds, picUrl) => {
   document.getElementById("placeHolder").innerHTML = data.city_name;
   document.getElementById("description").innerHTML =
     data.data[0].weather.description;
+};
+
+const formatDate = (date) => {
+  date.setFullYear(date.getFullYear() - 1);
+  var d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
+};
+
+const formatDate2 = (date) => {
+  var d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + (d.getDate() + 1),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
+};
+
+const getPicture = async (cityName) => {
+  cityName.toLowerCase();
+  console.log(cityName);
+  const res = await fetch("http://localhost:3000/picture");
+  const data = await res.json();
+  const picData = await fetch(data.key + cityName + data.end + "5");
+  const finalData = picData.json();
+  console.log(finalData);
 };
 
 export { handleSubmit };

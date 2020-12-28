@@ -18,6 +18,11 @@ const weatherUrlObject = {
   days: "&days=",
 };
 
+const pixUrlObject = {
+  key: `https://pixabay.com/api/?key=${process.env.PIXABY_KEY}&catagory=places&q=`,
+  end: `&safesearch=true&image_type=photo&order=popular&per_page=3&page=`,
+};
+
 const app = express();
 app.use(cors());
 // to use json
@@ -31,16 +36,20 @@ app.use(
 
 app.use(express.static("dist"));
 
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   res.sendFile("dist/index.html");
 });
 
-app.get("/city", function (req, res) {
+app.get("/city", (req, res) => {
   res.json(geoUrlObject);
 });
 
-app.get("/weather", function (req, res) {
+app.get("/weather", (req, res) => {
   res.json(weatherUrlObject);
+});
+
+app.get("/picture", (req, res) => {
+  res.json(pixUrlObject);
 });
 
 // designates what port the app will listen to for incoming requests
