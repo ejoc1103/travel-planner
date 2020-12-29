@@ -91,6 +91,7 @@ const getWeather = async (
   let type;
   let histStartDate = formatDate(startDate);
   let histEndDate = formatDate2(startDate);
+  console.log(daysTillTrip + "     " + daysTillTripEnds);
 
   if (daysTillTripEnds <= 16 && daysTillTrip > 0) {
     console.log("forecast");
@@ -142,7 +143,7 @@ const getWeather = async (
         weatherInfo.city_name,
         weatherInfo.country_code
       );
-      histUI(weatherInfo, histStartDate, histEndDate, src, type);
+      histUI(weatherInfo, daysTillTrip, daysTillTripEnds, src, type);
     } catch (err) {
       console.log(err + "error");
     }
@@ -152,18 +153,44 @@ const getWeather = async (
 };
 
 const forecastUI = (data, daysTillTrip, daysTillTripEnds, src, type) => {
-  document.getElementById("placeHolder").innerHTML = data.city_name;
+  document.getElementById("cityName").innerHTML = data.city_name;
 
+  document.getElementById("description").innerHTML =
+    data.data[0].weather.description;
+  document.getElementById("windSpeed").innerHTML = data.data[0].wind_spd;
+  document.getElementById("highTemp").innerHTML = data.data[0].high_temp;
+  document.getElementById("lowTemp").innerHTML = data.data[0].low_temp;
+  document.getElementById("chanceOfRain").innerHTML = data.data[0].pop;
+  document.getElementById("clouds").innerHTML = data.data[0].clouds;
+  document.getElementById("uv").innerHTML = data.data[0].uv;
+  document.getElementById(
+    "sunTime"
+  ).innerHTML = `Sunrise at ${data.data[0].sunrise_ts} and Sunset at ${data.data[0].sunset_ts}`;
   const img = document.getElementById("pic");
   img.style.display = "flex";
   img.src = src;
   img.alt = "City Picture";
+
+  const icon = document.getElementById("weatherIcon");
+  icon.style.display = "flex";
+  icon.src = `https://www.weatherbit.io/static/img/icons/${data.data[0].weather.icon}.png`;
+  icon.alt = "Weather Icon";
 };
 
 const histUI = (data, daysTillTrip, daysTillTripEnds, src, type) => {
-  document.getElementById("placeHolder").innerHTML = data.city_name;
-
+  document.getElementById("cityName").innerHTML = data.city_name;
+  console.log(data.data[0]);
   console.log("Histroy check worked");
+  console.log(daysTillTrip + "    " + daysTillTripEnds);
+  console.log(Math.floor(daysTillTrip / 7) + "weeks");
+  console.log((daysTillTrip % 7) + " days");
+  console.log(daysTillTripEnds - daysTillTrip + 1 + "days long trip");
+
+  document.getElementById("windSpeed").innerHTML = data.data[0].wind_spd;
+  document.getElementById("highTemp").innerHTML = data.data[0].temp;
+  document.getElementById("chanceOfRain").innerHTML = data.data[0].precip;
+  document.getElementById("clouds").innerHTML = data.data[0].clouds;
+  document.getElementById("snow").innerHTML = data.data[0].snow;
 
   const img = document.getElementById("pic");
   img.style.display = "flex";
