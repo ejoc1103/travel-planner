@@ -17,6 +17,7 @@
 // Automatically sort additional trips by countdown.
 // Move expired trips to bottom/have their style change so it’s clear it’s expired.
 let countries = require("i18n-iso-countries");
+countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 const dayConvert = 1000 * 60 * 60 * 24;
 function handleSubmit(event) {
   event.preventDefault();
@@ -205,19 +206,14 @@ const getPicture = async (city_name, country_code) => {
   let picData = await fetch(data.key + city_name + data.end);
   let finalData = await picData.json();
   if (!finalData.hits[0]) {
-    let selector =
-      country_code +
-      " (Alpha-2) => " +
-      countries.getName(country_code, "en", { select: "official" });
-    console.log(selector);
+    let selector = countries.getName(`${country_code}`, "en", {
+      select: "official",
+    });
     selector = selector.split(" ");
     selector = selector.join("+");
-    console.log("did second if get hit?");
     picData = await fetch(data.key + selector + data.end);
     finalData = await picData.json();
   }
-
-  console.log(finalData);
 
   const picChoice = Math.floor(Math.random() * finalData.hits.length);
   const src = finalData.hits[picChoice].largeImageURL;
