@@ -15,12 +15,12 @@ const weatherUrlObject = {
   baseUrl: "https://api.weatherbit.io/v2.0/",
   type: "/daily?units=I&lat=",
   mid: "&lon=",
-  days: "&days=",
+  days: "&days=16",
 };
 
 const pixUrlObject = {
   key: `https://pixabay.com/api/?key=${process.env.PIXABY_KEY}&catagory=places&q=`,
-  end: `&safesearch=true&image_type=photo&order=popular&per_page=3&page=`,
+  end: `&safesearch=true&image_type=photo&order=popular&per_page=50`,
 };
 
 const app = express();

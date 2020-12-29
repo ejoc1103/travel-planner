@@ -16,6 +16,7 @@
 // Allow the user to add additional trips (this may take some heavy reworking, but is worth the challenge).
 // Automatically sort additional trips by countdown.
 // Move expired trips to bottom/have their style change so it’s clear it’s expired.
+let countries = require("i18n-iso-countries");
 const dayConvert = 1000 * 60 * 60 * 24;
 function handleSubmit(event) {
   event.preventDefault();
@@ -84,15 +85,12 @@ const getWeather = async (
   { lat, lng },
   daysTillTrip,
   daysTillTripEnds,
-  startDate,
-  endDate
+  startDate
 ) => {
   let type;
-  let daysOfTrip = daysTillTripEnds - daysTillTrip + 1;
   let histStartDate = formatDate(startDate);
   let histEndDate = formatDate2(startDate);
 
-  console.log(histStartDate + "    " + histEndDate);
   if (daysTillTripEnds <= 16 && daysTillTrip > 0) {
     console.log("forecast");
     type = "forecast";
@@ -107,12 +105,15 @@ const getWeather = async (
           data.mid +
           lng +
           data.days +
-          daysOfTrip +
           data.key
       );
       const weatherInfo = await weatherObj.json();
-      let picUrl = getPicture(weatherInfo.city_name);
-      setUI(weatherInfo, daysTillTrip, daysTillTripEnds, picUrl);
+
+      let picUrl = await getPicture(
+        weatherInfo.city_name,
+        weatherInfo.country_code
+      );
+      forecastUI(weatherInfo, daysTillTrip, daysTillTripEnds, picUrl);
     } catch (err) {
       console.log(err + "error");
     }
@@ -136,8 +137,11 @@ const getWeather = async (
           data.key
       );
       const weatherInfo = await weatherObj.json();
-      let picUrl = getPicture(weatherInfo.city_name);
-      setUI(weatherInfo, histStartDate, histEndDate, picUrl);
+      let src = await getPicture(
+        weatherInfo.city_name,
+        weatherInfo.country_code
+      );
+      histUI(weatherInfo, histStartDate, histEndDate, src, type);
     } catch (err) {
       console.log(err + "error");
     }
@@ -146,14 +150,29 @@ const getWeather = async (
   }
 };
 
-const setUI = (data, daysTillTrip, daysTillTripEnds, picUrl) => {
+const forecastUI = (data, daysTillTrip, daysTillTripEnds, src, type) => {
   document.getElementById("placeHolder").innerHTML = data.city_name;
-  document.getElementById("description").innerHTML =
-    data.data[0].weather.description;
+
+  const img = document.getElementById("pic");
+  img.style.display = "flex";
+  img.src = src;
+  img.alt = "City Picture";
+};
+
+const histUI = (data, daysTillTrip, daysTillTripEnds, src, type) => {
+  document.getElementById("placeHolder").innerHTML = data.city_name;
+
+  console.log("Histroy check worked");
+
+  const img = document.getElementById("pic");
+  img.style.display = "flex";
+  img.src = src;
+  img.alt = "City Picture";
 };
 
 const formatDate = (date) => {
-  date.setFullYear(date.getFullYear() - 1);
+  let currentYear = new Date();
+  date.setFullYear(currentYear.getFullYear() - 1);
   var d = new Date(date),
     month = "" + (d.getMonth() + 1),
     day = "" + d.getDate(),
@@ -177,14 +196,32 @@ const formatDate2 = (date) => {
   return [year, month, day].join("-");
 };
 
-const getPicture = async (cityName) => {
-  cityName.toLowerCase();
-  console.log(cityName);
+const getPicture = async (city_name, country_code) => {
+  city_name = city_name.split(" ");
+  city_name = city_name.join("+");
   const res = await fetch("http://localhost:3000/picture");
   const data = await res.json();
-  const picData = await fetch(data.key + cityName + data.end + "5");
-  const finalData = picData.json();
+
+  let picData = await fetch(data.key + city_name + data.end);
+  let finalData = await picData.json();
+  if (!finalData.hits[0]) {
+    let selector =
+      country_code +
+      " (Alpha-2) => " +
+      countries.getName(country_code, "en", { select: "official" });
+    console.log(selector);
+    selector = selector.split(" ");
+    selector = selector.join("+");
+    console.log("did second if get hit?");
+    picData = await fetch(data.key + selector + data.end);
+    finalData = await picData.json();
+  }
+
   console.log(finalData);
+
+  const picChoice = Math.floor(Math.random() * finalData.hits.length);
+  const src = finalData.hits[picChoice].largeImageURL;
+  return src;
 };
 
 export { handleSubmit };
