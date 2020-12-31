@@ -6,16 +6,41 @@ body {
   align-items: center;
 }
 
-main {
-  flex: 2;
+.search {
+  background: #ffb26b;
+  padding: 30px;
+  margin: 15px;
+  width: 100%;
+  font-size: 4em;
+
+  input {
+    font-size: 1em;
+  }
 }
 
-section {
-  max-width: 800px;
-  margin: 50px auto;
+#tripContainer {
+  background: #939b62;
 }
 
-img {
-  height: 25%;
-  width: 25%;
+.icon {
+  height: 150px;
+  width: 150px;
+}
+
+.weatherContainer {
+  background-color: #ff7b54;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 30px;
+}
+
+.eachTrip {
+  display: grid;
+}
+
+.cityImg {
+  grid-column: 1/-1;
+}
+.tripHeader {
+  grid-column: 1/-1;
 }

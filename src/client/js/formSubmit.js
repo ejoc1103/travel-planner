@@ -17,6 +17,8 @@
 // Move expired trips to bottom/have their style change so it’s clear it’s expired.
 import countries from "i18n-iso-countries";
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+import uniqid from "uniqid";
+
 const dayConvert = 1000 * 60 * 60 * 24;
 function handleSubmit(event) {
   event.preventDefault();
@@ -167,6 +169,7 @@ const postData = async (data, daysTillTrip, daysTillTripEnds, src, type) => {
     tripDays = data.data;
   }
   let dataObj = {
+    id: uniqid(),
     city_name: data.city_name,
     timezone: data.timezone,
     weather: tripDays,
@@ -191,26 +194,40 @@ const postData = async (data, daysTillTrip, daysTillTripEnds, src, type) => {
   }
 };
 
-const buildUI = (tripInfo) => {
-  console.log(tripInfo);
-  const container = document.getElementById("tripContainer");
+// console.log(data.data[0]);
+// console.log("Histroy check worked");
+// console.log(daysTillTrip + "    " + daysTillTripEnds);
+// console.log(Math.floor(daysTillTrip / 7) + "weeks");
+// console.log((daysTillTrip % 7) + " days");
+// console.log(daysTillTripEnds - daysTillTrip + 1 + "days long trip");
 
+const buildUI = (tripInfo) => {
+  const container = document.getElementById("tripContainer");
+  container.innerHTML = "";
   tripInfo.map((trip) => {
+    const eachTripContainer = document.createElement("div");
+    eachTripContainer.className = "eachTrip";
+
     const cityName = document.createElement("h1");
     cityName.innerHTML = trip.city_name;
+    cityName.className = "tripHeader";
 
     const cityImg = document.createElement("img");
     cityImg.src = trip.src;
     cityImg.alt = "Trip Picture";
-    cityImg.display = "flex";
+    cityImg.className = "cityImg";
+    if (!Array.isArray(trip.weather)) {
+      trip.weather = [trip.weather];
+    }
     trip.weather.map((day) => {
+      const weatherContainer = document.createElement("div");
+      weatherContainer.className = "weatherContainer";
       if (trip.type === "forecast") {
         const icon = document.createElement("img");
-        icon.src =  `https://www.weatherbit.io/static/img/icons/${day.weather.icon}.png`;
+        icon.src = `https://www.weatherbit.io/static/img/icons/${day.weather.icon}.png`;
         icon.alt = "weather icon";
+        icon.className = "icon";
 
-
-        console.log(icon)
         const date = document.createElement("h4");
         date.innerHTML = day.datetime;
 
@@ -229,13 +246,14 @@ const buildUI = (tripInfo) => {
         const uv = document.createElement("h6");
         uv.innerHTML = `UV index is a ${Math.round(day.uv * 10) / 10}`;
 
-        cityName.insertAdjacentElement("beforeend", date);
-        cityName.insertAdjacentElement("beforeend", icon);
-        cityName.insertAdjacentElement("beforeend", desc);
-        cityName.insertAdjacentElement("beforeend", temp);
-        cityName.insertAdjacentElement("beforeend", rain);
-        cityName.insertAdjacentElement("beforeend", cloud);
-        cityName.insertAdjacentElement("beforeend", uv);
+        weatherContainer.insertAdjacentElement("beforeend", date);
+        weatherContainer.insertAdjacentElement("beforeend", icon);
+        weatherContainer.insertAdjacentElement("beforeend", desc);
+        weatherContainer.insertAdjacentElement("beforeend", temp);
+        weatherContainer.insertAdjacentElement("beforeend", rain);
+        weatherContainer.insertAdjacentElement("beforeend", cloud);
+        weatherContainer.insertAdjacentElement("beforeend", uv);
+        eachTripContainer.insertAdjacentElement("beforeend", weatherContainer);
       } else {
         const desc = document.createElement("h4");
         desc.innerHTML = `A typical day that time of year is:`;
@@ -263,43 +281,11 @@ const buildUI = (tripInfo) => {
         cityName.insertAdjacentElement("beforeend", snow);
       }
 
-      container.insertAdjacentElement("beforeend", cityImg);
-      container.insertAdjacentElement("beforeend", cityName);
+      eachTripContainer.insertAdjacentElement("afterbegin", cityImg);
+      cityImg.insertAdjacentElement("afterend", cityName);
+      container.insertAdjacentElement("beforeend", eachTripContainer);
     });
   });
-};
-const forecastUI = (data, daysTillTrip, daysTillTripEnds, src, type) => {
-  document.getElementById("description").innerHTML =
-    data.data[0].weather.description;
-  document.getElementById("windSpeed").innerHTML = data.data[0].wind_spd;
-  document.getElementById("highTemp").innerHTML = data.data[0].high_temp;
-  document.getElementById("lowTemp").innerHTML = data.data[0].low_temp;
-  document.getElementById("chanceOfRain").innerHTML = data.data[0].pop;
-  document.getElementById("clouds").innerHTML = data.data[0].clouds;
-  document.getElementById("uv").innerHTML = data.data[0].uv;
-  document.getElementById(
-    "sunTime"
-  ).innerHTML = `Sunrise at ${data.data[0].sunrise_ts} and Sunset at ${data.data[0].sunset_ts}`;
-
-  const icon = document.getElementById("weatherIcon");
-  icon.style.display = "flex";
-  icon.src = `https://www.weatherbit.io/static/img/icons/${data.data[0].weather.icon}.png`;
-  icon.alt = "Weather Icon";
-};
-
-const histUI = (data, daysTillTrip, daysTillTripEnds, src, type) => {
-  console.log(data.data[0]);
-  console.log("Histroy check worked");
-  console.log(daysTillTrip + "    " + daysTillTripEnds);
-  console.log(Math.floor(daysTillTrip / 7) + "weeks");
-  console.log((daysTillTrip % 7) + " days");
-  console.log(daysTillTripEnds - daysTillTrip + 1 + "days long trip");
-
-  document.getElementById("windSpeed").innerHTML = data.data[0].wind_spd;
-  document.getElementById("highTemp").innerHTML = data.data[0].temp;
-  document.getElementById("chanceOfRain").innerHTML = data.data[0].precip;
-  document.getElementById("clouds").innerHTML = data.data[0].clouds;
-  document.getElementById("snow").innerHTML = data.data[0].snow;
 };
 
 const formatDate = (date) => {

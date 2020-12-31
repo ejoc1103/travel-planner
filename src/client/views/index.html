@@ -5,32 +5,34 @@
     <title>Travel Planner</title>
   </head>
   <body>
-    <div class="holder headline">Travel Planner</div>
-    <form onsubmit="return Client.handleSubmit(event)">
-      <label for="city">City</label>
-      <input
-        id="city"
-        type="text"
-        name="input"
-        value=""
-        placeholder="enter city here"
-      />
+    <div class="search">
+      <div class="holder headline">Travel Planner</div>
+      <form onsubmit="return Client.handleSubmit(event)">
+        <label for="city">City</label>
+        <input
+          id="city"
+          type="text"
+          name="input"
+          value=""
+          placeholder="enter city here"
+        />
 
-      <div class="dates">
-        <label for="departure">Departure Date:</label>
-        <input id="date-departure" name="departure" type="date" required />
+        <div class="dates">
+          <label for="departure">Departure Date:</label>
+          <input id="date-departure" name="departure" type="date" required />
 
-        <label for="return">Return Date:</label>
-        <input id="date-return" name="return" type="date" required />
-      </div>
-      <input
-        type="submit"
-        name=""
-        value="submit"
-        onclick="return Client.handleSubmit(event)"
-        onsubmit="return Client.handleSubmit(event)"
-      />
-    </form>
+          <label for="return">Return Date:</label>
+          <input id="date-return" name="return" type="date" required />
+        </div>
+        <input
+          type="submit"
+          name=""
+          value="submit"
+          onclick="return Client.handleSubmit(event)"
+          onsubmit="return Client.handleSubmit(event)"
+        />
+      </form>
+    </div>
     <div id="tripContainer"></div>
   </body>
 </html>
