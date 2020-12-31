@@ -23,6 +23,8 @@ const pixUrlObject = {
   end: `&safesearch=true&image_type=photo&order=popular&per_page=50`,
 };
 
+const uiArray = [];
+
 const app = express();
 app.use(cors());
 // to use json
@@ -50,6 +52,16 @@ app.get("/weather", (req, res) => {
 
 app.get("/picture", (req, res) => {
   res.json(pixUrlObject);
+});
+
+app.get("/all", (req, res) => {
+  res.send(uiArray);
+});
+
+app.post("/add", (req, res) => {
+  uiArray.push(req.body);
+  res.send(uiArray);
+  console.log(uiArray);
 });
 
 // designates what port the app will listen to for incoming requests
