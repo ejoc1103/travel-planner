@@ -30,12 +30,14 @@ body {
 .weatherContainer {
   background-color: #ff7b54;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   padding: 30px;
 }
 
 .eachTrip {
   display: grid;
+  padding: 20px;
+  grid-gap: 10px;
 }
 
 .cityImg {
@@ -43,4 +45,42 @@ body {
 }
 .tripHeader {
   grid-column: 1/-1;
+  color: white;
+  padding: 20px;
+  margin: 10px;
+}
+
+.dateIcon {
+  display: grid;
+  grid-column: 1fr;
+  justify-content: center;
+  align-items: center;
+  grid-column: span 2;
+}
+
+.histDateDesc {
+  display: grid;
+  grid-column: span 6;
+  justify-content: center;
+  align-items: center;
+}
+
+.descContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column: span 3;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 3em;
+}
+
+.descHistContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column: span 3;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 3em;
 }

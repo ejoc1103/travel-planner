@@ -93,7 +93,7 @@ const getWeather = async (
   let histStartDate = formatDate(startDate);
   let histEndDate = formatDate2(startDate);
 
-  if (daysTillTripEnds <= 16 && daysTillTrip > 0) {
+  if (daysTillTripEnds <= 16 && daysTillTrip >= 0) {
     type = "forecast";
     try {
       const res = await fetch("http://localhost:3000/weather");
@@ -118,7 +118,7 @@ const getWeather = async (
     } catch (err) {
       console.log(err + "error");
     }
-  } else if (daysTillTrip > 0) {
+  } else if (daysTillTrip >= 0) {
     type = "history";
     try {
       const res = await fetch("http://localhost:3000/weather");
@@ -208,9 +208,11 @@ const buildUI = (tripInfo) => {
     const eachTripContainer = document.createElement("div");
     eachTripContainer.className = "eachTrip";
 
+    const tripHeader = document.createElement("div");
+    tripHeader.className = "tripHeader";
     const cityName = document.createElement("h1");
     cityName.innerHTML = trip.city_name;
-    cityName.className = "tripHeader";
+    cityName.className = "cityName";
 
     const cityImg = document.createElement("img");
     cityImg.src = trip.src;
@@ -222,13 +224,26 @@ const buildUI = (tripInfo) => {
     trip.weather.map((day) => {
       const weatherContainer = document.createElement("div");
       weatherContainer.className = "weatherContainer";
+
+      const dateIcon = document.createElement("div");
+      dateIcon.className = "dateIcon";
+
+      const histDateDesc = document.createElement("div");
+      histDateDesc.className = "histDateDesc";
+
+      const descContainer = document.createElement("div");
+      descContainer.className = "descContainer";
+
+      const descHistContainer = document.createElement("div");
+      descHistContainer.className = "descHistContainer";
+
       if (trip.type === "forecast") {
         const icon = document.createElement("img");
         icon.src = `https://www.weatherbit.io/static/img/icons/${day.weather.icon}.png`;
         icon.alt = "weather icon";
         icon.className = "icon";
 
-        const date = document.createElement("h4");
+        const date = document.createElement("h2");
         date.innerHTML = day.datetime;
 
         const desc = document.createElement("h6");
@@ -246,17 +261,20 @@ const buildUI = (tripInfo) => {
         const uv = document.createElement("h6");
         uv.innerHTML = `UV index is a ${Math.round(day.uv * 10) / 10}`;
 
-        weatherContainer.insertAdjacentElement("beforeend", date);
-        weatherContainer.insertAdjacentElement("beforeend", icon);
-        weatherContainer.insertAdjacentElement("beforeend", desc);
-        weatherContainer.insertAdjacentElement("beforeend", temp);
-        weatherContainer.insertAdjacentElement("beforeend", rain);
-        weatherContainer.insertAdjacentElement("beforeend", cloud);
-        weatherContainer.insertAdjacentElement("beforeend", uv);
+        dateIcon.insertAdjacentElement("beforeend", date);
+        dateIcon.insertAdjacentElement("beforeend", icon);
+        descContainer.insertAdjacentElement("beforeend", temp);
+        descContainer.insertAdjacentElement("beforeend", desc);
+        descContainer.insertAdjacentElement("beforeend", rain);
+        descContainer.insertAdjacentElement("beforeend", cloud);
+        descContainer.insertAdjacentElement("beforeend", uv);
+        weatherContainer.insertAdjacentElement("beforeend", dateIcon);
+        weatherContainer.insertAdjacentElement("beforeend", descContainer);
+
         eachTripContainer.insertAdjacentElement("beforeend", weatherContainer);
       } else {
-        const desc = document.createElement("h4");
-        desc.innerHTML = `A typical day that time of year is:`;
+        const dateDesc = document.createElement("h2");
+        dateDesc.innerHTML = `The typical weather for ${day.datetime} is:`;
 
         const temp = document.createElement("h6");
         temp.innerHTML = `High: ${day.max_temp} Low: ${day.min_temp}`;
@@ -273,17 +291,21 @@ const buildUI = (tripInfo) => {
         const snow = document.createElement("h6");
         snow.innerHTML = `${day.snow} inches of snow`;
 
-        cityName.insertAdjacentElement("beforeend", desc);
-        cityName.insertAdjacentElement("beforeend", temp);
-        cityName.insertAdjacentElement("beforeend", rain);
-        cityName.insertAdjacentElement("beforeend", clouds);
-        cityName.insertAdjacentElement("beforeend", wind);
-        cityName.insertAdjacentElement("beforeend", snow);
+        histDateDesc.insertAdjacentElement("beforeend", dateDesc);
+        descHistContainer.insertAdjacentElement("beforeend", temp);
+        descHistContainer.insertAdjacentElement("beforeend", rain);
+        descHistContainer.insertAdjacentElement("beforeend", clouds);
+        descHistContainer.insertAdjacentElement("beforeend", wind);
+        descHistContainer.insertAdjacentElement("beforeend", snow);
+        weatherContainer.insertAdjacentElement("beforeend", histDateDesc);
+        weatherContainer.insertAdjacentElement("beforeend", descHistContainer);
+        eachTripContainer.insertAdjacentElement("beforeend", weatherContainer);
       }
 
-      eachTripContainer.insertAdjacentElement("afterbegin", cityImg);
-      cityImg.insertAdjacentElement("afterend", cityName);
-      container.insertAdjacentElement("beforeend", eachTripContainer);
+      tripHeader.insertAdjacentElement("beforeend", cityImg);
+      tripHeader.insertAdjacentElement("beforeend", cityName);
+      eachTripContainer.insertAdjacentElement("afterbegin", tripHeader);
+      container.insertAdjacentElement("afterbegin", eachTripContainer);
     });
   });
 };
