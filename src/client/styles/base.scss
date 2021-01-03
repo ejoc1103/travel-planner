@@ -32,6 +32,7 @@ body {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   padding: 30px;
+  grid-gap: 10px;
 }
 
 .eachTrip {
@@ -56,6 +57,7 @@ body {
   justify-content: center;
   align-items: center;
   grid-column: span 2;
+  border: 10px solid black;
 }
 
 .histDateDesc {
@@ -63,24 +65,31 @@ body {
   grid-column: span 6;
   justify-content: center;
   align-items: center;
+  border: 10px solid black;
 }
 
 .descContainer {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-column: span 3;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   font-size: 3em;
+  border: 10px solid black;
+  h6 {
+    margin: 10px;
+  }
 }
 
 .descHistContainer {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-column: span 3;
+  grid-column: span 6;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   font-size: 3em;
+  border: 10px solid black;
+  h6 {
+    margin: 10px;
+  }
 }

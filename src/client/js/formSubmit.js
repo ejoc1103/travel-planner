@@ -246,7 +246,7 @@ const buildUI = (tripInfo) => {
         const date = document.createElement("h2");
         date.innerHTML = day.datetime;
 
-        const desc = document.createElement("h6");
+        const desc = document.createElement("h2");
         desc.innerHTML = day.weather.description;
 
         const temp = document.createElement("h6");
@@ -263,8 +263,8 @@ const buildUI = (tripInfo) => {
 
         dateIcon.insertAdjacentElement("beforeend", date);
         dateIcon.insertAdjacentElement("beforeend", icon);
+        dateIcon.insertAdjacentElement("beforeend", desc);
         descContainer.insertAdjacentElement("beforeend", temp);
-        descContainer.insertAdjacentElement("beforeend", desc);
         descContainer.insertAdjacentElement("beforeend", rain);
         descContainer.insertAdjacentElement("beforeend", cloud);
         descContainer.insertAdjacentElement("beforeend", uv);
