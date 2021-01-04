@@ -194,8 +194,6 @@ const postData = async (data, daysTillTrip, daysTillTripEnds, src, type) => {
   }
 };
 
-// console.log(data.data[0]);
-// console.log("Histroy check worked");
 // console.log(daysTillTrip + "    " + daysTillTripEnds);
 // console.log(Math.floor(daysTillTrip / 7) + "weeks");
 // console.log((daysTillTrip % 7) + " days");
@@ -218,6 +216,10 @@ const buildUI = (tripInfo) => {
     cityImg.src = trip.src;
     cityImg.alt = "Trip Picture";
     cityImg.className = "cityImg";
+
+    const removeButton = document.createElement("button");
+    removeButton.innerHTML = "remove trip";
+
     if (!Array.isArray(trip.weather)) {
       trip.weather = [trip.weather];
     }
@@ -304,6 +306,7 @@ const buildUI = (tripInfo) => {
 
       tripHeader.insertAdjacentElement("beforeend", cityImg);
       tripHeader.insertAdjacentElement("beforeend", cityName);
+      tripHeader.insertAdjacentElement("beforeend", removeButton);
       eachTripContainer.insertAdjacentElement("afterbegin", tripHeader);
       container.insertAdjacentElement("afterbegin", eachTripContainer);
     });
