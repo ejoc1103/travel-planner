@@ -1,20 +1,3 @@
-// At least one of these is required, but the rest are great additional ways to further customize and improve your project!
-// Add end date and display length of trip.
-// Pull in an image for the country from Pixabay API when the entered location brings up no results (good for obscure localities).
-// Allow user to add multiple destinations on the same trip.
-// Pull in weather for additional locations.
-// Allow the user to add hotel and/or flight data.
-// Multiple places to stay? Multiple flights?
-// Integrate the REST Countries API to pull in data for the country being visited.
-// Allow the user to remove the trip.
-// Use Local Storage to save the data so that when they close, then revisit the page, their information is still there.
-// Instead of just pulling a single day forecast, pull the forecast for multiple days.
-// Incorporate icons into forecast.
-// Allow user to Print their trip and/or export to PDF.
-// Allow the user to add a todo list and/or packing list for their trip.
-// Allow the user to add additional trips (this may take some heavy reworking, but is worth the challenge).
-// Automatically sort additional trips by countdown.
-// Move expired trips to bottom/have their style change so it’s clear it’s expired.
 import countries from "i18n-iso-countries";
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 import uniqid from "uniqid";
@@ -219,6 +202,10 @@ const buildUI = (tripInfo) => {
 
     const removeButton = document.createElement("button");
     removeButton.innerHTML = "remove trip";
+    removeButton.value = `${trip.id}`;
+    removeButton.onclick = function (event) {
+      console.log(event.target.value);
+    };
 
     if (!Array.isArray(trip.weather)) {
       trip.weather = [trip.weather];
