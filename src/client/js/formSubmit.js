@@ -203,8 +203,28 @@ const buildUI = (tripInfo) => {
     const removeButton = document.createElement("button");
     removeButton.innerHTML = "remove trip";
     removeButton.value = `${trip.id}`;
-    removeButton.onclick = function (event) {
+    removeButton.onclick = async function (event) {
       console.log(event.target.value);
+      const res = await fetch("http://localhost:3000/all");
+      const uiData = await res.json();
+
+      const filtData = uiData.filter((ui) => ui.id !== event.target.value);
+
+      const response = await fetch("http://localhost:3000/remove", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filtData),
+      });
+      try {
+        const newData = await response.json();
+        buildUI(newData);
+      } catch (error) {
+        console.log("error in post", error);
+      }
+      console.log(filtData);
     };
 
     if (!Array.isArray(trip.weather)) {

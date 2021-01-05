@@ -23,7 +23,7 @@ const pixUrlObject = {
   end: `&safesearch=true&image_type=photo&order=popular&per_page=50`,
 };
 
-const uiArray = [];
+let uiArray = [];
 
 const app = express();
 app.use(cors());
@@ -60,6 +60,12 @@ app.get("/all", (req, res) => {
 
 app.post("/add", (req, res) => {
   uiArray.push(req.body);
+  res.send(uiArray);
+  console.log(uiArray);
+});
+
+app.post("/remove", (req, res) => {
+  uiArray = req.body;
   res.send(uiArray);
   console.log(uiArray);
 });
