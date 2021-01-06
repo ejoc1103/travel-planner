@@ -15,8 +15,14 @@ function handleSubmit(event) {
   startDate = new Date(startDate);
   endDate = new Date(endDate);
 
+  startDate.setDate(startDate.getDate() + 1);
+  endDate.setDate(endDate.getDate() + 1);
+  console.log(startDate);
+  console.log(endDate);
+
   //time till the trip starts in nanoseconds
   const timeTillTrip = new Date(startDate) - currentDate;
+
   //time till trip starts in days
   const daysTillTrip = Math.floor(timeTillTrip / dayConvert);
   //time till the trip ends in nanoseconds
@@ -76,7 +82,7 @@ const getWeather = async (
   let histStartDate = formatDate(startDate);
   let histEndDate = formatDate2(startDate);
 
-  if (daysTillTripEnds <= 16 && daysTillTrip >= 0) {
+  if (daysTillTripEnds <= 16) {
     type = "forecast";
     try {
       const res = await fetch("http://localhost:3000/weather");
@@ -177,22 +183,20 @@ const postData = async (data, daysTillTrip, daysTillTripEnds, src, type) => {
   }
 };
 
-// console.log(daysTillTrip + "    " + daysTillTripEnds);
-// console.log(Math.floor(daysTillTrip / 7) + "weeks");
-// console.log((daysTillTrip % 7) + " days");
-// console.log(daysTillTripEnds - daysTillTrip + 1 + "days long trip");
-
 const buildUI = (tripInfo) => {
   const container = document.getElementById("tripContainer");
   container.innerHTML = "";
   tripInfo.map((trip) => {
+    let weeks = Math.floor(trip.daysTillTrip / 7);
+    let days = trip.daysTillTrip % 7;
+    let length = trip.daysTillTripEnds - trip.daysTillTrip + 1;
     const eachTripContainer = document.createElement("div");
     eachTripContainer.className = "eachTrip";
 
     const tripHeader = document.createElement("div");
     tripHeader.className = "tripHeader";
     const cityName = document.createElement("h1");
-    cityName.innerHTML = trip.city_name;
+    cityName.innerHTML = `There are ${weeks} weeks and ${days} days left until your trip to ${trip.city_name}!!!  You are going for ${length} days`;
     cityName.className = "cityName";
 
     const cityImg = document.createElement("img");
@@ -201,6 +205,7 @@ const buildUI = (tripInfo) => {
     cityImg.className = "cityImg";
 
     const removeButton = document.createElement("button");
+    removeButton.className = "removeButton";
     removeButton.innerHTML = "remove trip";
     removeButton.value = `${trip.id}`;
     removeButton.onclick = async function (event) {
@@ -282,6 +287,7 @@ const buildUI = (tripInfo) => {
 
         eachTripContainer.insertAdjacentElement("beforeend", weatherContainer);
       } else {
+        weatherContainer.style.gridColumn = "1/-1";
         const dateDesc = document.createElement("h2");
         dateDesc.innerHTML = `The typical weather for ${day.datetime} is:`;
 
