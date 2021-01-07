@@ -27,7 +27,6 @@ const getWeather = async (
           data.key
       );
       const weatherInfo = await weatherObj.json();
-      console.log(weatherObj);
       let { src, cityFound } = await getPicture(
         weatherInfo.city_name,
         weatherInfo.country_code

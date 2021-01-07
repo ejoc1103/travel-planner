@@ -1,6 +1,7 @@
 //Formats the dates so they will work properly when called in the weatherAPI
 
 const formatDate = (date) => {
+  console.log(date);
   let currentYear = new Date();
   date.setFullYear(currentYear.getFullYear() - 1);
   var d = new Date(date),

@@ -11,8 +11,16 @@ showcases Node, Express, Sass, Webpack and Fetch
 ## Get Up and Running
 
 To run you will need to  
+
+Get api keys for weatherbit api, pixabay api and geonames api  
+
 npm install  
+
 npm run build-prod  
+
 npm run start  
+
 In a second terminal  
+
 npm run build-dev
+

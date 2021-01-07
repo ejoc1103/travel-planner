@@ -5,36 +5,42 @@
     <title>Travel Planner</title>
   </head>
   <body>
+    <div class="holder headline">Travel Planner</div>
     <div class="search">
-      <div class="holder headline">Travel Planner</div>
-      <form onsubmit="return Client.handleSubmit(event)">
-        <label for="city">City</label>
-        <input
-          id="city"
-          type="text"
-          name="input"
-          value=""
-          placeholder="enter city here"
-        />
+      <div></div>
+      <div>
+        <form onsubmit="return Client.handleSubmit(event)">
+          <label for="city">City</label>
+          <input
+            id="city"
+            type="text"
+            name="input"
+            value=""
+            placeholder="enter city here"
+          />
 
-        <div class="dates">
-          <label for="departure">Departure Date:</label>
-          <input id="date-departure" name="departure" type="date" required />
-        </div>
-        <div>
-          <label for="return">Return Date:</label>
-          <input id="date-return" name="return" type="date" required />
-        </div>
-        <input
-          type="submit"
-          name=""
-          value="submit"
-          onclick="return Client.handleSubmit(event)"
-          onsubmit="return Client.handleSubmit(event)"
-        />
-      </form>
+          <div class="dates">
+            <label for="departure">Departure Date:</label>
+            <input id="date-departure" name="departure" type="date" required />
+          </div>
+          <div class="dates">
+            <label for="return">Return Date:</label>
+            <input id="date-return" name="return" type="date" required />
+          </div>
+          <input type="submit" name="" value="submit" />
+        </form>
+      </div>
+      <div></div>
     </div>
     <div id="errorText"></div>
     <div id="tripContainer"></div>
+    <script>
+      if ("serviceWorker" in navigator) {
+        // Use the window load event to keep the page load performant
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/service-worker.js");
+        });
+      }
+    </script>
   </body>
 </html>

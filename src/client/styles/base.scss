@@ -4,12 +4,31 @@ body {
   min-height: 100vh;
   justify-content: center;
   align-items: center;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+form {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.headline {
+  font-size: 3em;
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
 .search {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   flex-wrap: wrap;
   background: #ffb26b;
+  text-align: start;
+  justify-content: start;
   padding: 30px;
   margin: 15px;
   width: 100%;
@@ -61,10 +80,11 @@ body {
 .dateIcon {
   display: grid;
   grid-column: 1fr;
+  text-align: center;
   justify-content: center;
-  align-items: center;
   grid-column: span 2;
   border: 10px solid black;
+  max-height: 100%;
 }
 
 .histDateDesc {
@@ -78,7 +98,7 @@ body {
 .descContainer {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-column: span 3;
+  grid-column: span 4;
   justify-content: center;
   align-items: center;
   font-size: 3em;
@@ -106,8 +126,6 @@ body {
 
 .removeButton {
   display: flex;
-  height: 10%;
-  width: 20%;
   align-items: center;
   justify-content: center;
   font-size: 1.5em;
@@ -117,13 +135,43 @@ body {
 
 @media only screen and (min-device-width: 650px) {
   .eachTrip {
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
   }
   .dateIcon {
     grid-column: span 3;
+    font-size: 0.85em;
   }
   .descContainer {
-    grid-column: span 2;
+    grid-column: span 3;
     grid-template-columns: 1fr;
+    font-size: 1.5em;
+  }
+  .tripHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 20px;
+  }
+  .weatherContainer {
+    padding: 5px;
+    grid-gap: 5px;
+    grid-template-columns: repeat(2fr, auto);
+    text-align: center;
+    justify-content: center;
+  }
+  .icon {
+    max-width: 50%;
+    max-height: 50%;
+    padding: 0;
+    margin: 0;
+  }
+  figure {
+    max-height: 600px;
+    max-width: 450px;
+    margin: 10px;
+    justify-content: center;
+  }
+  .cityNameDiv {
+    grid-column: span 2;
   }
 }

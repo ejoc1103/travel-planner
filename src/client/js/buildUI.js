@@ -5,13 +5,26 @@ const buildUI = (tripInfo) => {
   tripInfo.sort(function (a, b) {
     return b.daysTillTrip - a.daysTillTrip;
   });
+
+  // a sort feature I couldn't quire get working
+  // let tripInfo = unsortedTripInfo.filter((trip) => trip.daysTillTripEnds >= 0);
+
+  // unsortedTripInfo.map((trip, index) => {
+  //   console.log("Map?");
+  //   let sort;
+  //   if (trip.daysTillTripEnds <= 0) {
+  //     console.log("If");
+  //     sort = unsortedTripInfo.slice(index, 1);
+  //     tripInfo.push(sort[0]);
+  //   }
+  // });
+
   //erases error text if it's up from a previous failed trip
   let errorText = document.getElementById("errorText");
   errorText.innerHTML = "";
   const container = document.getElementById("tripContainer");
   container.innerHTML = "";
   tripInfo.map((trip) => {
-    console.log(trip.weather);
     //sets variables for the time till trip and length of trip
     let weeks = Math.floor(trip.daysTillTrip / 7);
     let days = trip.daysTillTrip % 7;
@@ -21,13 +34,16 @@ const buildUI = (tripInfo) => {
 
     const tripHeader = document.createElement("div");
     tripHeader.className = "tripHeader";
+    const cityNameDiv = document.createElement("div");
+    cityNameDiv.className = "cityNameDiv";
+
     const cityName = document.createElement("h1");
 
     // sets the capiton based on when the trip is happening
     if (trip.daysTillTrip < 0 && trip.daysTillTripEnds < 0) {
       cityName.innerHTML = `This trip to ${trip.city_name} has passed! Hope you had a good time!`;
     } else if (trip.daysTillTrip < 0 && trip.daysTillTripEnds > 0) {
-      cityName.innerHTML = `You're already on this ${length} day trip to ${trip.cityName}! Hope you're having fun!`;
+      cityName.innerHTML = `You're already on this ${length} day trip to ${trip.city_name}! Hope you're having fun!`;
     } else {
       cityName.innerHTML = `There are ${weeks} weeks and ${days} days left until your trip to ${trip.city_name}!!!  You are going for ${length} days`;
     }
@@ -54,7 +70,6 @@ const buildUI = (tripInfo) => {
     removeButton.innerHTML = "remove trip";
     removeButton.value = `${trip.id}`;
     removeButton.onclick = async function (event) {
-      console.log(event.target.value);
       const res = await fetch("http://localhost:3000/all");
       const uiData = await res.json();
 
@@ -75,6 +90,9 @@ const buildUI = (tripInfo) => {
         console.log("error in post", error);
       }
     };
+
+    cityNameDiv.appendChild(cityName);
+    cityNameDiv.appendChild(removeButton);
     //When you plan a one day trip api doesnt return an array this just makes it an array to make it easier to work with
     if (!Array.isArray(trip.weather)) {
       trip.weather = [trip.weather];
@@ -120,7 +138,7 @@ const buildUI = (tripInfo) => {
         desc.innerHTML = day.weather.description;
 
         const temp = document.createElement("h6");
-        temp.innerHTML = `High: ${day.max_temp} Low: ${day.low_temp}`;
+        temp.innerHTML = `High: ${day.max_temp}&deg Low: ${day.low_temp}&deg`;
 
         const rain = document.createElement("h6");
         rain.innerHTML = `Chance of rain is ${day.pop}%`;
@@ -164,10 +182,8 @@ const buildUI = (tripInfo) => {
         const dateDesc = document.createElement("h2");
         dateDesc.innerHTML = `Recent past weather for ${months[month]}:`;
 
-        console.log(month);
-
         const temp = document.createElement("h6");
-        temp.innerHTML = `High: ${day.max_temp} Low: ${day.min_temp}`;
+        temp.innerHTML = `High: ${day.max_temp}&deg Low: ${day.min_temp}&deg`;
 
         const rain = document.createElement("h6");
         rain.innerHTML = `${day.precip} inches of rain`;
@@ -193,8 +209,7 @@ const buildUI = (tripInfo) => {
       }
 
       tripHeader.insertAdjacentElement("beforeend", figure);
-      tripHeader.insertAdjacentElement("beforeend", cityName);
-      tripHeader.insertAdjacentElement("beforeend", removeButton);
+      tripHeader.insertAdjacentElement("beforeend", cityNameDiv);
       eachTripContainer.insertAdjacentElement("afterbegin", tripHeader);
       container.insertAdjacentElement("afterbegin", eachTripContainer);
     });

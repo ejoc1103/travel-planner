@@ -15,8 +15,6 @@ function handleSubmit(event) {
 
   startDate.setDate(startDate.getDate() + 1);
   endDate.setDate(endDate.getDate() + 1);
-  console.log(startDate);
-  console.log(endDate);
 
   //time till the trip starts in nanoseconds
   const timeTillTrip = new Date(startDate) - currentDate;
