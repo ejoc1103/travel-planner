@@ -27,10 +27,12 @@ const getWeather = async (
           data.key
       );
       const weatherInfo = await weatherObj.json();
+      //sends city name and country code to pixabay api needs both in case their or no pics of the city
       let { src, cityFound } = await getPicture(
         weatherInfo.city_name,
         weatherInfo.country_code
       );
+      //makes sure that you ender a return date that is later than your depart date
       if (daysTillTrip <= daysTillTripEnds) {
         postData(
           weatherInfo,

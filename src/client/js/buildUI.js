@@ -69,7 +69,7 @@ const buildUI = (tripInfo) => {
     removeButton.className = "removeButton";
     removeButton.innerHTML = "remove trip";
     removeButton.value = `${trip.id}`;
-    removeButton.onclick = async function (event) {
+    removeButton.addEventListener("click", async function (event) {
       const res = await fetch("http://localhost:3000/all");
       const uiData = await res.json();
 
@@ -89,7 +89,7 @@ const buildUI = (tripInfo) => {
       } catch (error) {
         console.log("error in post", error);
       }
-    };
+    });
 
     cityNameDiv.appendChild(cityName);
     cityNameDiv.appendChild(removeButton);

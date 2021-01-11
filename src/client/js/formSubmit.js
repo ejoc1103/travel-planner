@@ -1,6 +1,21 @@
 import { getCity } from "./getCity";
-
+import { buildUI } from "./buildUI";
 const dayConvert = 1000 * 60 * 60 * 24;
+
+//Makes sure that the page loads the data from the server if you navigate away from the page after
+//navigating away from the page or refreshing
+window.addEventListener("load", async function () {
+  console.log("Working?");
+  const res = await fetch("http://localhost:3000/all");
+  const data = await res.json();
+  console.log(data);
+  try {
+    buildUI(data);
+  } catch (error) {
+    console.log("error in post", error);
+  }
+});
+
 function handleSubmit(event) {
   event.preventDefault();
 
@@ -30,9 +45,11 @@ function handleSubmit(event) {
   //as long as the form has been submitted properly this will call the server
   //for what it needs to call geonames api
   if (formText) {
+    //calls the server for api key and other info needed for api call
     fetch("http://localhost:3000/city")
       .then((res) => res.json())
       .then((res) => {
+        //calls the function for calling the geonames api
         getCity(
           res.baseUrl,
           res.end,
